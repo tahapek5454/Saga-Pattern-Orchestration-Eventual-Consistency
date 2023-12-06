@@ -1,10 +1,14 @@
-using SagaStateMachine.Service;
+using MassTransit;
 
-IHost host = Host.CreateDefaultBuilder(args)
-    .ConfigureServices(services =>
+var builder = Host.CreateApplicationBuilder(args);
+
+builder.Services.AddMassTransit(configure =>
+{
+    configure.UsingRabbitMq((context, configurator) =>
     {
-        services.AddHostedService<Worker>();
-    })
-    .Build();
+        configurator.Host(builder.Configuration.GetConnectionString("RabbitMQ"));
+    });
+});
 
+var host = builder.Build();
 host.Run();

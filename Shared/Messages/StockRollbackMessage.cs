@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shared
+namespace Shared.Messages
 {
-    internal class Class1
+    public class StockRollbackMessage
     {
+        public List<OrderItemMessage> OrderItems { get; set; }
     }
 }

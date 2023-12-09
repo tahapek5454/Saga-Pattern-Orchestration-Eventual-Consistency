@@ -2,6 +2,8 @@ using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Order.API.Context;
 using Order.API.ViewModels;
+using Shared.OrderEvents;
+using Shared.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,7 +32,7 @@ if (app.Environment.IsDevelopment())
 }
 
 
-app.MapPost("create-order", async (CreateOrderVM model, OrderDbContext context) =>
+app.MapPost("create-order", async (CreateOrderVM model, OrderDbContext context, ISendEndpointProvider sendEndpointProvider) =>
 {
     Order.API.Models.Order order = new()
     {
@@ -49,6 +51,28 @@ app.MapPost("create-order", async (CreateOrderVM model, OrderDbContext context) 
 
     await context.Orders.AddAsync(order);
     await context.SaveChangesAsync();
+
+    // triger event
+    OrderStartedEvent @orderStartedEvent = new()
+    {
+        BuyerId = order.BuyerId,
+        OrderId = order.Id,
+        TotalPrice = order.TotalPrice,
+        OrderItems = order.OrderItems.Select(x => new Shared.Messages.OrderItemMessage()
+        {
+            Count = x.Count,
+            Price = x.Price,
+            ProductId = x.ProductId,
+        }).ToList()
+    };
+
+    var sendEndPoint = await sendEndpointProvider.GetSendEndpoint(new Uri($"queue:{RabbitMQSettings.StateMachineQueue}"));
+
+    await sendEndPoint.Send(orderStartedEvent);
+
+    // after that State Machine will take control. That will publish OrderCreatedEvent for StockAPI
+
+
 });
 
 app.Run();

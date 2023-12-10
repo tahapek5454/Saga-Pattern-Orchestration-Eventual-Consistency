@@ -19,7 +19,7 @@ namespace SagaStateMachine.Service.StateMachines
         public Event<OrderStartedEvent> OrderStartedEvent { get; set; }
         public Event<StockReservedEvent> StockReservedEvent { get; set; }
         public Event<PaymentCompletedEvent> PaymentCompletedEvent { get; set; }
-        public Event<StockNotReserved> StockNotReservedEvent { get; set; }
+        public Event<StockNotReservedEvent> StockNotReservedEvent { get; set; }
         public Event<PaymentFailedEvent> PaymentFailedEvent { get; set; }
 
 

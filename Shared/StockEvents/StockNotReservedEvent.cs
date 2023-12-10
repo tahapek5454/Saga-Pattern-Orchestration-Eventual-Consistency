@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Shared.StockEvents
 {
-    public class StockNotReserved : CorrelatedBy<Guid>
+    public class StockNotReservedEvent : CorrelatedBy<Guid>
     {
-        public StockNotReserved(Guid correlationId)
+        public StockNotReservedEvent(Guid correlationId)
         {
             CorrelationId = correlationId;
         }

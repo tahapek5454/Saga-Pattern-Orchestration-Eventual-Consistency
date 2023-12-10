@@ -16,7 +16,8 @@ builder.Services.AddMassTransit(configure =>
 
         options.AddDbContext<DbContext, OrderStateDbContext>((provider, _builder) =>
         {
-            _builder.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQL"));
+            //_builder.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQL"));
+            _builder.UseSqlServer(builder.Configuration.GetConnectionString("MSSQL"));
         });
 
     }); 
